@@ -11,6 +11,7 @@ adicionar.addEventListener('click', () => {
 
         // Cria um botão de remover
         const remove_button = document.createElement('button');
+        remove_button.textContent = "remover";
 
         // Adiciona o novo item à lista de tarefas
         area_de_tarefas.appendChild(novoItem);
@@ -20,6 +21,11 @@ adicionar.addEventListener('click', () => {
 
         // Limpa o campo de entrada após adicionar a tarefa
         tarefa.value = '';
+
+        // Adiciona a lógica do botão de remover
+        remove_button.addEventListener('click', () => {
+            area_de_tarefas.removeChild(novoItem);
+        });
     }
 });
 
