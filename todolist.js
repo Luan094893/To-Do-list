@@ -2,31 +2,48 @@ const tarefa = document.getElementById('taskInput');
 const adicionar = document.getElementById('addTaskButton');
 const area_de_tarefas = document.getElementById('taskList');
 
+// Função para adicionar a tarefa à lista
+function adicionarTarefa(tarefaTexto) {
+    const novoItem = document.createElement('li');
+    novoItem.textContent = tarefaTexto;
+
+    const remove_button = document.createElement('button');
+    remove_button.textContent = "remover";
+
+    novoItem.appendChild(remove_button);
+    area_de_tarefas.appendChild(novoItem);
+
+    remove_button.addEventListener('click', () => {
+        area_de_tarefas.removeChild(novoItem);
+        salvarTarefas(); // Atualiza o localStorage após remover
+    });
+}
+
+// Função para salvar as tarefas no localStorage
+function salvarTarefas() {
+    const tarefas = [];
+    document.querySelectorAll('#taskList li').forEach(tarefa => {
+        tarefas.push(tarefa.firstChild.textContent); // Salva apenas o texto da tarefa
+    });
+    localStorage.setItem('tarefas', JSON.stringify(tarefas));
+}
+
+// Função para carregar as tarefas do localStorage
+function carregarTarefas() {
+    const tarefasSalvas = localStorage.getItem('tarefas');
+    if (tarefasSalvas) {
+        const listaDeTarefas = JSON.parse(tarefasSalvas);
+        listaDeTarefas.forEach(tarefaTexto => adicionarTarefa(tarefaTexto));
+    }
+}
+
 adicionar.addEventListener('click', () => {
-    // Verifica se o campo de entrada não está vazio
     if (tarefa.value.trim() !== '') {
-        // Cria um novo item de lista
-        const novoItem = document.createElement('li');
-        novoItem.textContent = tarefa.value;
-
-        // Cria um botão de remover
-        const remove_button = document.createElement('button');
-        remove_button.textContent = "remover";
-
-        // Adiciona o novo item à lista de tarefas
-        area_de_tarefas.appendChild(novoItem);
-
-        // Adiciona o botão ao novo item
-        novoItem.appendChild(remove_button);
-
-        // Limpa o campo de entrada após adicionar a tarefa
-        tarefa.value = '';
-
-        // Adiciona a lógica do botão de remover
-        remove_button.addEventListener('click', () => {
-            area_de_tarefas.removeChild(novoItem);
-        });
+        adicionarTarefa(tarefa.value);
+        tarefa.value = ''; // Limpa o campo de entrada
+        salvarTarefas(); // Salva no localStorage após adicionar
     }
 });
 
-// O "trim()" serve para remover so espaços em branco no começo e no final de ums string
+// Carrega as tarefas salvas ao carregar a página
+document.addEventListener('DOMContentLoaded', carregarTarefas);
